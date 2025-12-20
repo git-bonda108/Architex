@@ -1,0 +1,61 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/architect_pro/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  bhkType     String   // "2BHK" or "3BHK"
+  description String?
+  roomsData   Json     // Array of rooms with dimensions, positions, types
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([bhkType])
+}
+
+model Design {
+  id              String   @id @default(cuid())
+  name            String
+  bhkType         String
+  templateId      String?
+  roomsData       Json     // Current room configuration
+  specifications  Json     // Wall thickness, dimensions, etc.
+  metadata        Json?    // Additional info
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([bhkType])
+}
+
+model Configuration {
+  id              String   @id @default(cuid())
+  designId        String   @unique
+  overallWidth    Float    // in meters or feet
+  overallHeight   Float    // in meters or feet
+  wallThickness   Float    // in cm or inches
+  ceilingHeight   Float    // in meters or feet
+  unit            String   @default("meters") // "meters" or "feet"
+  drainageSpecs   Json?    // Future use
+  sewageSpecs     Json?    // Future use
+  materialSpecs   Json?    // Future use
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model UserPreference {
+  id             String   @id @default(cuid())
+  userId         String?  @unique
+  defaultUnit    String   @default("meters")
+  defaultBHK     String   @default("2BHK")
+  preferences    Json?    // Additional preferences
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
