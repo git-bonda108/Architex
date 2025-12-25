@@ -36,7 +36,7 @@ export default function ControlsPanel({
 }: ControlsPanelProps) {
   const bhkOptions: BHKType[] = ['Studio', '1BHK', '2BHK', '3BHK', '4BHK', '5BHK+'];
   const propertyOptions: PropertyType[] = ['Apartment', 'Condo', 'Villa', 'Townhouse', 'Duplex', 'Penthouse', 'Bungalow'];
-  const shapeOptions: FloorPlanShape[] = ['Rectangular', 'L-Shaped', 'H-Shaped', 'M-Shaped'];
+  const shapeOptions: FloorPlanShape[] = ['Regular', 'L-Shaped', 'H-Shaped', 'M-Shaped'];
 
   return (
     <div className="p-6 space-y-6">

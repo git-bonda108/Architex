@@ -23,7 +23,7 @@ A comprehensive Next.js application for creating professional architectural floo
 - **Bungalow** - Single-story detached homes
 
 ### 📐 Floor Plan Shapes
-- **Rectangular** - Standard linear layout for compact spaces
+- **Regular** - Standard linear layout for compact spaces (traditional rectangular floor plan)
 - **L-Shaped** - Two perpendicular wings, ideal for corner plots
 - **H-Shaped** - Two parallel wings with central bridge
 - **M-Shaped** - Central section with two projecting wings

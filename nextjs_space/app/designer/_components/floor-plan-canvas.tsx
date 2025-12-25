@@ -37,7 +37,7 @@ export default function FloorPlanCanvas({
   fixtures = [], 
   furniture = [], 
   sections = [],
-  shape = 'Rectangular',
+  shape = 'Regular',
   specifications, 
   loading 
 }: FloorPlanCanvasProps) {
@@ -142,63 +142,7 @@ export default function FloorPlanCanvas({
             />
 
             {/* Render section outlines for complex shapes */}
-            {sections && sections?.length > 0 && (
-              <g className="sections-group">
-                {sections?.map?.((section) => (
-                  <g key={section?.id}>
-                    {/* Section boundary - subtle dotted line */}
-                    <rect
-                      x={section?.x}
-                      y={section?.y}
-                      width={section?.width}
-                      height={section?.height}
-                      fill="none"
-                      stroke="#94A3B8"
-                      strokeWidth="0.12"
-                      strokeDasharray="0.4 0.3"
-                      opacity="0.5"
-                    />
-                    {/* Section label */}
-                    {section?.name && (
-                      <text
-                        x={section?.x + section?.width / 2}
-                        y={section?.y + 0.5}
-                        fontSize="0.35"
-                        fill="#64748B"
-                        textAnchor="middle"
-                        fontFamily="Arial, sans-serif"
-                        fontWeight="500"
-                      >
-                        {section?.name}
-                      </text>
-                    )}
-                  </g>
-                ))}
-                
-                {/* Overall shape outline - prominent dotted line on top */}
-                {shape !== 'Rectangular' && (
-                  <g className="shape-outline-overlay">
-                    {sections?.map?.((section) => (
-                      <rect
-                        key={`outline-${section?.id}`}
-                        x={section?.x}
-                        y={section?.y}
-                        width={section?.width}
-                        height={section?.height}
-                        fill="none"
-                        stroke="#2563EB"
-                        strokeWidth="0.25"
-                        strokeDasharray="0.6 0.4"
-                        opacity="0.8"
-                        style={{
-                          filter: 'drop-shadow(0 0 0.2px rgba(37, 99, 235, 0.5))',
-                        }}
-                      />
-                    ))}
-                  </g>
-                )}
-              </g>
-            )}
+            {/* Section outlines removed for clean diagram */}
 
             {/* Render rooms */}
             {rooms?.map?.((room) => {

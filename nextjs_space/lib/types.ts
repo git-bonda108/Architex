@@ -13,7 +13,7 @@ export type PropertyType =
   | 'Bungalow';
 
 export type FloorPlanShape = 
-  | 'Rectangular' 
+  | 'Regular' 
   | 'L-Shaped' 
   | 'H-Shaped' 
   | 'M-Shaped';

@@ -10,7 +10,7 @@ import { generateSections, placeRoomsInShape } from '@/lib/shape-layout-utils';
 export default function DesignerWorkspace() {
   const [bhkType, setBhkType] = useState<BHKType>('2BHK');
   const [propertyType, setPropertyType] = useState<PropertyType>('Apartment');
-  const [shape, setShape] = useState<FloorPlanShape>('Rectangular');
+  const [shape, setShape] = useState<FloorPlanShape>('Regular');
   const [templateRooms, setTemplateRooms] = useState<Room[]>([]);
   const [templateDoors, setTemplateDoors] = useState<Door[]>([]);
   const [templateWindows, setTemplateWindows] = useState<Window[]>([]);

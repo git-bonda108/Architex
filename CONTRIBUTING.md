@@ -141,7 +141,7 @@ export function FloorPlanCanvas({ rooms, specifications }: Props) {
 
 ```typescript
 export type FloorPlanShape = 
-  | 'Rectangular' 
+  | 'Regular' 
   | 'L-Shaped' 
   | 'H-Shaped' 
   | 'M-Shaped'
@@ -239,7 +239,7 @@ export function placeRoomsInShape(
 
 ```typescript
 const shapeOptions: FloorPlanShape[] = [
-  'Rectangular',
+  'Regular',
   'L-Shaped',
   'H-Shaped',
   'M-Shaped',

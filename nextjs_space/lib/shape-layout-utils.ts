@@ -51,7 +51,7 @@ export function generateSections(
   totalHeight: number
 ): Section[] {
   switch (shape) {
-    case 'Rectangular':
+    case 'Regular':
       return generateRectangularSections(totalWidth, totalHeight);
     case 'L-Shaped':
       return generateLShapedSections(totalWidth, totalHeight);
@@ -243,7 +243,7 @@ export function placeRoomsInShape(
   let roomIdCounter = 1;
 
   switch (shape) {
-    case 'Rectangular':
+    case 'Regular':
       return placeRoomsRectangular(sections[0], roomIdCounter);
     case 'L-Shaped':
       return placeRoomsLShaped(sections, roomIdCounter);

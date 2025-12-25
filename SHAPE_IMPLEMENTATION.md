@@ -44,7 +44,7 @@ export function generateSections(
   totalHeight: number
 ): Section[] {
   switch (shape) {
-    case 'Rectangular':
+    case 'Regular':
       return generateRectangularSections(totalWidth, totalHeight);
     case 'L-Shaped':
       return generateLShapedSections(totalWidth, totalHeight);
@@ -203,7 +203,7 @@ export function placeRoomsInShape(
   totalHeight: number
 ): Room[] {
   switch (shape) {
-    case 'Rectangular':
+    case 'Regular':
       return placeRoomsRectangular(sections[0], 1);
     case 'L-Shaped':
       return placeRoomsLShaped(sections, 1);
@@ -411,79 +411,20 @@ export const REQUIRED_ROOMS: Record<string, RoomRequirements> = {
 
 ### Phase 4: Visual Rendering
 
-The floor plan canvas renders shapes with visual indicators:
-
-```tsx
-{/* Section outlines - subtle gray */}
-{sections && sections?.length > 0 && (
-  <g className="sections-group">
-    {sections?.map?.((section) => (
-      <g key={section?.id}>
-        <rect
-          x={section?.x}
-          y={section?.y}
-          width={section?.width}
-          height={section?.height}
-          fill="none"
-          stroke="#94A3B8"
-          strokeWidth="0.12"
-          strokeDasharray="0.4 0.3"
-          opacity="0.5"
-        />
-        {section?.name && (
-          <text
-            x={section?.x + section?.width / 2}
-            y={section?.y + 0.5}
-            fontSize="0.35"
-            fill="#64748B"
-            textAnchor="middle"
-            fontFamily="Arial, sans-serif"
-            fontWeight="500"
-          >
-            {section?.name}
-          </text>
-        )}
-      </g>
-    ))}
-    
-    {/* Prominent shape outline - blue dotted line */}
-    {shape !== 'Rectangular' && (
-      <g className="shape-outline-overlay">
-        {sections?.map?.((section) => (
-          <rect
-            key={`outline-${section?.id}`}
-            x={section?.x}
-            y={section?.y}
-            width={section?.width}
-            height={section?.height}
-            fill="none"
-            stroke="#2563EB"
-            strokeWidth="0.25"
-            strokeDasharray="0.6 0.4"
-            opacity="0.8"
-            style={{
-              filter: 'drop-shadow(0 0 0.2px rgba(37, 99, 235, 0.5))',
-            }}
-          />
-        ))}
-      </g>
-    )}
-  </g>
-)}
-```
+The floor plan canvas renders shapes with clean, professional styling:
 
 **Visual Layer Hierarchy:**
-1. Grid background (bottom)
-2. Room rectangles
-3. Subtle section outlines (gray, dashed)
-4. Prominent shape outline (blue, thicker)
-5. Section labels (top)
+1. Grid background (bottom layer for reference)
+2. Room rectangles with colors and labels
+3. Architectural elements (doors, windows, fixtures)
+4. Furniture placement
+5. Dimension lines and annotations (top layer)
 
-**Styling Properties:**
-- **Subtle outlines**: `stroke-width: 0.12`, `opacity: 0.5`, gray color
-- **Prominent outline**: `stroke-width: 0.25`, `opacity: 0.8`, blue color
-- **Drop shadow**: Creates glow effect for better visibility
-- **Dotted pattern**: `strokeDasharray: "0.6 0.4"` for clear distinction
+**Design Philosophy:**
+- **Clean diagrams**: No overlapping visual elements or clutter
+- **Professional aesthetics**: Following CAD standards with minimal decoration
+- **Clear hierarchy**: Each element has a distinct visual layer
+- **Readable annotations**: Small, precise text positioned strategically
 
 ---
 
