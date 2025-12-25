@@ -1,11 +1,25 @@
 'use client';
 
-import { Room } from '@/lib/types';
+import { Room, Door, Window, Fixture, Furniture, Section, FloorPlanShape } from '@/lib/types';
 import { calculateTotalArea, calculateBounds, formatArea } from '@/lib/floor-plan-utils';
+import { 
+  generateDoorSVG, 
+  generateWindowSVG, 
+  generateFixtureSVG, 
+  generateFurnitureSVG,
+  generateNorthArrowSVG,
+  generateDimensionLineSVG
+} from '@/lib/architectural-symbols';
 import { Loader2, Home, Ruler } from 'lucide-react';
 
 interface FloorPlanCanvasProps {
   rooms: Room[];
+  doors?: Door[];
+  windows?: Window[];
+  fixtures?: Fixture[];
+  furniture?: Furniture[];
+  sections?: Section[];
+  shape?: FloorPlanShape;
   specifications: {
     overallWidth: number;
     overallHeight: number;
@@ -16,7 +30,17 @@ interface FloorPlanCanvasProps {
   loading: boolean;
 }
 
-export default function FloorPlanCanvas({ rooms, specifications, loading }: FloorPlanCanvasProps) {
+export default function FloorPlanCanvas({ 
+  rooms, 
+  doors = [], 
+  windows = [], 
+  fixtures = [], 
+  furniture = [], 
+  sections = [],
+  shape = 'Rectangular',
+  specifications, 
+  loading 
+}: FloorPlanCanvasProps) {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center bg-slate-50">
@@ -57,20 +81,26 @@ export default function FloorPlanCanvas({ rooms, specifications, loading }: Floo
             <div className="flex items-center gap-2">
               <Ruler className="h-4 w-4 text-blue-600" />
               <span className="text-sm font-medium text-slate-700">Total Area:</span>
-              <span className="text-sm font-semibold text-blue-600">
+              <span className="text-sm font-semibold text-blue-600 transition-all duration-300">
                 {formatArea(totalArea, specifications?.unit ?? 'meters')}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-slate-700">Dimensions:</span>
-              <span className="text-sm font-semibold text-slate-900">
-                {bounds?.width?.toFixed?.(1) ?? '0.0'} × {bounds?.height?.toFixed?.(1) ?? '0.0'} {specifications?.unit ?? 'meters'}
+              <span className="text-sm font-semibold text-slate-900 transition-all duration-300">
+                {specifications?.overallWidth?.toFixed?.(1) ?? '0.0'} × {specifications?.overallHeight?.toFixed?.(1) ?? '0.0'} {specifications?.unit ?? 'meters'}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-slate-700">Wall Thickness:</span>
-              <span className="text-sm font-semibold text-slate-900">
+              <span className="text-sm font-semibold text-slate-900 transition-all duration-300">
                 {specifications?.wallThickness ?? 15} cm
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-slate-700">Ceiling Height:</span>
+              <span className="text-sm font-semibold text-slate-900 transition-all duration-300">
+                {specifications?.ceilingHeight ?? 3} {specifications?.unit ?? 'meters'}
               </span>
             </div>
           </div>
@@ -111,55 +141,178 @@ export default function FloorPlanCanvas({ rooms, specifications, loading }: Floo
               fill="url(#grid)"
             />
 
-            {/* Render rooms */}
-            {rooms?.map?.((room) => (
-              <g key={room?.id ?? 'room'}>
-                {/* Room fill */}
-                <rect
-                  x={room?.x ?? 0}
-                  y={room?.y ?? 0}
-                  width={room?.width ?? 0}
-                  height={room?.height ?? 0}
-                  fill={room?.color ?? '#F0F0F0'}
-                  stroke="#334155"
-                  strokeWidth={wallThickness}
-                  className="transition-all duration-300"
-                />
+            {/* Render section outlines for complex shapes */}
+            {sections && sections?.length > 0 && (
+              <g className="sections-group">
+                {sections?.map?.((section) => (
+                  <g key={section?.id}>
+                    {/* Section boundary - subtle dotted line */}
+                    <rect
+                      x={section?.x}
+                      y={section?.y}
+                      width={section?.width}
+                      height={section?.height}
+                      fill="none"
+                      stroke="#94A3B8"
+                      strokeWidth="0.12"
+                      strokeDasharray="0.4 0.3"
+                      opacity="0.5"
+                    />
+                    {/* Section label */}
+                    {section?.name && (
+                      <text
+                        x={section?.x + section?.width / 2}
+                        y={section?.y + 0.5}
+                        fontSize="0.35"
+                        fill="#64748B"
+                        textAnchor="middle"
+                        fontFamily="Arial, sans-serif"
+                        fontWeight="500"
+                      >
+                        {section?.name}
+                      </text>
+                    )}
+                  </g>
+                ))}
                 
-                {/* Room label */}
-                <text
-                  x={(room?.x ?? 0) + ((room?.width ?? 0) / 2)}
-                  y={(room?.y ?? 0) + ((room?.height ?? 0) / 2) - 0.2}
-                  textAnchor="middle"
-                  className="font-semibold"
-                  fontSize="0.35"
-                  fill="#1e293b"
-                >
-                  {room?.name ?? 'Room'}
-                </text>
-                
-                {/* Room dimensions */}
-                <text
-                  x={(room?.x ?? 0) + ((room?.width ?? 0) / 2)}
-                  y={(room?.y ?? 0) + ((room?.height ?? 0) / 2) + 0.3}
-                  textAnchor="middle"
-                  fontSize="0.25"
-                  fill="#64748b"
-                >
-                  {room?.width?.toFixed?.(1) ?? '0.0'} × {room?.height?.toFixed?.(1) ?? '0.0'} m
-                </text>
-                
-                {/* Area */}
-                <text
-                  x={(room?.x ?? 0) + ((room?.width ?? 0) / 2)}
-                  y={(room?.y ?? 0) + ((room?.height ?? 0) / 2) + 0.65}
-                  textAnchor="middle"
-                  fontSize="0.22"
-                  fill="#64748b"
-                >
-                  {formatArea((room?.width ?? 0) * (room?.height ?? 0), specifications?.unit ?? 'meters')}
-                </text>
+                {/* Overall shape outline - prominent dotted line on top */}
+                {shape !== 'Rectangular' && (
+                  <g className="shape-outline-overlay">
+                    {sections?.map?.((section) => (
+                      <rect
+                        key={`outline-${section?.id}`}
+                        x={section?.x}
+                        y={section?.y}
+                        width={section?.width}
+                        height={section?.height}
+                        fill="none"
+                        stroke="#2563EB"
+                        strokeWidth="0.25"
+                        strokeDasharray="0.6 0.4"
+                        opacity="0.8"
+                        style={{
+                          filter: 'drop-shadow(0 0 0.2px rgba(37, 99, 235, 0.5))',
+                        }}
+                      />
+                    ))}
+                  </g>
+                )}
               </g>
+            )}
+
+            {/* Render rooms */}
+            {rooms?.map?.((room) => {
+              const roomWidth = room?.width ?? 0;
+              const roomHeight = room?.height ?? 0;
+              const roomX = room?.x ?? 0;
+              const roomY = room?.y ?? 0;
+              
+              // Professional architectural text - small, clean, positioned at top
+              const labelFontSize = 0.28; // Fixed small size like real CAD drawings
+              const dimFontSize = 0.20;   // Even smaller for dimensions
+              
+              const roomName = room?.name ?? 'Room';
+              
+              // Position text at top-center of room (professional style)
+              const textX = roomX + (roomWidth / 2);
+              const textY = roomY + labelFontSize + 0.15; // Small margin from top
+              
+              // Only show text if room is wide enough for the label
+              const showLabel = roomWidth > 1.5;
+              
+              // Show dimensions at bottom of room if space permits
+              const showDimensions = roomWidth > 2.5 && roomHeight > 2.0;
+              const dimY = roomY + roomHeight - 0.35;
+              
+              return (
+                <g key={room?.id ?? 'room'} style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                  {/* Room fill */}
+                  <rect
+                    x={roomX}
+                    y={roomY}
+                    width={roomWidth}
+                    height={roomHeight}
+                    fill={room?.color ?? '#F0F0F0'}
+                    stroke="#334155"
+                    strokeWidth={wallThickness}
+                    style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                  />
+                  
+                  {/* Room label - clean text at top center (professional CAD style) */}
+                  {showLabel && (
+                    <text
+                      x={textX}
+                      y={textY}
+                      textAnchor="middle"
+                      fontSize={labelFontSize}
+                      fill="#000000"
+                      fontFamily="Arial, sans-serif"
+                      fontWeight="normal"
+                      style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                    >
+                      {roomName}
+                    </text>
+                  )}
+                  
+                  {/* Room dimensions at bottom (professional style) */}
+                  {showDimensions && (
+                    <text
+                      x={textX}
+                      y={dimY}
+                      textAnchor="middle"
+                      fontSize={dimFontSize}
+                      fill="#666666"
+                      fontFamily="Arial, sans-serif"
+                      style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                    >
+                      {roomWidth?.toFixed?.(1)} × {roomHeight?.toFixed?.(1)} m
+                    </text>
+                  )}
+                  
+                  {/* Area at very bottom if room is tall enough */}
+                  {showDimensions && roomHeight > 3.0 && (
+                    <text
+                      x={textX}
+                      y={dimY + dimFontSize + 0.15}
+                      textAnchor="middle"
+                      fontSize={dimFontSize * 0.9}
+                      fill="#888888"
+                      fontFamily="Arial, sans-serif"
+                      style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                    >
+                      {formatArea(roomWidth * roomHeight, specifications?.unit ?? 'meters')}
+                    </text>
+                  )}
+                </g>
+              );
+            }) ?? null}
+
+            {/* Render furniture (below fixtures so fixtures appear on top) */}
+            {furniture?.map?.((item) => (
+              <g key={item?.id ?? 'furniture'} dangerouslySetInnerHTML={{ 
+                __html: generateFurnitureSVG(item) 
+              }} />
+            )) ?? null}
+
+            {/* Render doors */}
+            {doors?.map?.((door) => (
+              <g key={door?.id ?? 'door'} dangerouslySetInnerHTML={{ 
+                __html: generateDoorSVG(door, wallThickness) 
+              }} />
+            )) ?? null}
+
+            {/* Render windows */}
+            {windows?.map?.((window) => (
+              <g key={window?.id ?? 'window'} dangerouslySetInnerHTML={{ 
+                __html: generateWindowSVG(window, wallThickness) 
+              }} />
+            )) ?? null}
+
+            {/* Render fixtures */}
+            {fixtures?.map?.((fixture) => (
+              <g key={fixture?.id ?? 'fixture'} dangerouslySetInnerHTML={{ 
+                __html: generateFixtureSVG(fixture) 
+              }} />
             )) ?? null}
 
             {/* Outer boundary */}
@@ -171,7 +324,31 @@ export default function FloorPlanCanvas({ rooms, specifications, loading }: Floo
               fill="none"
               stroke="#0f172a"
               strokeWidth={wallThickness * 1.5}
+              style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
             />
+
+            {/* North arrow */}
+            <g dangerouslySetInnerHTML={{ 
+              __html: generateNorthArrowSVG((bounds?.width ?? 0) - 1.2, 1.2, 0.8) 
+            }} />
+
+            {/* Overall dimension lines */}
+            <g dangerouslySetInnerHTML={{ 
+              __html: generateDimensionLineSVG(
+                0, 0, 
+                (bounds?.width ?? 0), 0, 
+                `${specifications?.overallWidth?.toFixed?.(1) ?? '0.0'} ${specifications?.unit === 'meters' ? 'm' : 'ft'}`,
+                0.5
+              ) 
+            }} />
+            <g dangerouslySetInnerHTML={{ 
+              __html: generateDimensionLineSVG(
+                0, 0, 
+                0, (bounds?.height ?? 0), 
+                `${specifications?.overallHeight?.toFixed?.(1) ?? '0.0'} ${specifications?.unit === 'meters' ? 'm' : 'ft'}`,
+                0.5
+              ) 
+            }} />
           </svg>
 
           {/* Legend */}

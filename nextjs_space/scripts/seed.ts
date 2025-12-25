@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Professional floor plan templates based on architectural standards
+
 interface Room {
   id: string;
   name: string;

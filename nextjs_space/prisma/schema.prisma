@@ -10,15 +10,24 @@ datasource db {
 }
 
 model Template {
-  id          String   @id @default(cuid())
-  name        String
-  bhkType     String   // "2BHK" or "3BHK"
-  description String?
-  roomsData   Json     // Array of rooms with dimensions, positions, types
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  bhkType       String   // "Studio", "1BHK", "2BHK", "3BHK", "4BHK", "5BHK+"
+  propertyType  String   @default("Apartment") // "Apartment", "Condo", "Villa", "Townhouse", "Duplex", "Penthouse", "Studio", "Bungalow"
+  shape         String   @default("Rectangular") // "Rectangular", "L-Shaped", "H-Shaped", "M-Shaped"
+  description   String?
+  sections      Json?    // Array of section objects for complex shapes { x, y, width, height }
+  roomsData     Json     // Array of rooms with dimensions, positions, types
+  doorsData     Json?    // Array of doors with positions and types
+  windowsData   Json?    // Array of windows
+  fixturesData  Json?    // Array of bathroom/kitchen fixtures
+  furnitureData Json?    // Array of furniture items
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   
   @@index([bhkType])
+  @@index([propertyType])
+  @@index([shape])
 }
 
 model Design {
